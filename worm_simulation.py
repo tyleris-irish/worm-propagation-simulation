@@ -1,12 +1,15 @@
 import random
-import json
 import csv
 
 IP_RANGE = 100000
 SCAN_RATE = 2
 
-
 def initialize_ips():
+    """
+    Initialize the IPs and their statuses.
+    The vulnerable IPs are the ones whose last three digits are 001-010 in each 1000.
+    The initially infected machine is IP 4009 (infected at tick 0).
+    """
     status = {
         "infected": {},
         "vulnerable": [],
@@ -21,50 +24,66 @@ def initialize_ips():
     return status
 
 
-def code_red(status):
-    
+def code_red(status:dict, run:int):
+    """
+    Simulate the Code Red worm infection process.
+    The worm scans the entire IP range and infects vulnerable machines.
+    """
     tick = 1
     while True:
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
-                if infected_tick <= tick+30:
-                    target = random.randint(1, IP_RANGE+1)
+                if tick >= infected_tick+30:
+                    target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
         
         if status["vulnerable"] == []:
-            print("All vulnerable IPs have been infected.")
             break
 
         tick += 1
     
     # Save infection data as CSV
-    with open("infected_ips.csv", "w", newline='') as f:
+    with open(f"code_red_{run}.csv", "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["Infected_Tick", "IP"])
+        writer.writerow(["IP", "Infected_Tick"])
         for ip, infected_tick in sorted(status["infected"].items()):
-            writer.writerow([infected_tick, ip])
+            writer.writerow([ip, infected_tick])
 
 
-def code_red_II(status):
+def code_red_II(status:dict, run:int):
+    """
+    Simulate the Code Red II worm infection process.
+    The worm scans a range of 20 IPs around the infected machine or randomly selects a target.
+    """
     tick = 1
     while True:
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
-                if infected_tick <= tick+30:
+                if tick >= infected_tick+30:
                     if random.random() < 0.5:
-                        target = random.randint(ip-10, ip+10+1)
+                        target = random.randint(ip-10, ip+10)
                     else:
-                        target = random.randint(1, IP_RANGE+1)
+                        target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
         
         if status["vulnerable"] == []:
-            print("All vulnerable IPs have been infected.")
             break
 
         tick += 1
 
+    # Save infection data as CSV
+    with open(f"code_red_II_{run}.csv", "w", newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["IP", "Infected_Tick"])
+        for ip, infected_tick in sorted(status["infected"].items()):
+            writer.writerow([ip, infected_tick])
+
 
 def infect_ip(status, target_ip, tick):
+    """
+    Infect a target IP if it is vulnerable.
+    If the target IP is already infected, do nothing.
+    """
     if target_ip in status["infected"]:
         return
 
@@ -73,16 +92,15 @@ def infect_ip(status, target_ip, tick):
         status["vulnerable"].remove(target_ip)
         print(f"IP {target_ip} is infected.")
 
-def main():
-
-    # Simulate Code Red worm
-    status = initialize_ips()
-    code_red(status)
-
-    # Simulate Code Red II worm
-    status = initialize_ips()
-    code_red_II(status)
-        
-
 if __name__ == "__main__":
-    main()
+    # Simulate Code Red worm three times
+    for run in range (1, 3+1):
+        # Simulate Code Red worm
+        status = initialize_ips()
+        code_red(status, run)
+
+    # Simulate Code Red II worm three times
+    for run in range(1, 3+1):
+        # Simulate Code Red II worm
+        status = initialize_ips()
+        code_red_II(status, run)
