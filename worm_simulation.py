@@ -29,25 +29,27 @@ def code_red(status:dict, run:int):
     Simulate the Code Red worm infection process.
     The worm scans the entire IP range and infects vulnerable machines.
     """
-    tick = 1
-    while True:
+    tick = 0
+
+    # Record I(0): the number of infected machines at each tick
+    it_counts = [(tick, sum(1 for t in status["infected"].values() if t <= tick))]
+
+    while status["vulnerable"]:
+        tick += 1
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
                 if tick >= infected_tick+30:
                     target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
-        
-        if status["vulnerable"] == []:
-            break
-
-        tick += 1
+        active_infections = sum(1 for t in status["infected"].values() if t <= tick)
+        it_counts.append((tick, active_infections))
     
     # Save infection data as CSV
     with open(f"code_red_{run}.csv", "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["IP", "Infected_Tick"])
-        for ip, infected_tick in sorted(status["infected"].items()):
-            writer.writerow([ip, infected_tick])
+        writer.writerow(["Tick", "Infected_Count"])
+        for tick, count in it_counts:
+            writer.writerow([tick, count])
 
 
 def code_red_II(status:dict, run:int):
@@ -55,8 +57,13 @@ def code_red_II(status:dict, run:int):
     Simulate the Code Red II worm infection process.
     The worm scans a range of 20 IPs around the infected machine or randomly selects a target.
     """
-    tick = 1
-    while True:
+    tick = 0
+
+    # Record I(0): the number of infected machines at each tick
+    it_counts = [(tick, sum(1 for t in status["infected"].values() if t <= tick))]
+
+    while status["vulnerable"]:
+        tick += 1
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
                 if tick >= infected_tick+30:
@@ -65,18 +72,15 @@ def code_red_II(status:dict, run:int):
                     else:
                         target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
-        
-        if status["vulnerable"] == []:
-            break
-
-        tick += 1
+        active_infections = sum(1 for t in status["infected"].values() if t <= tick)
+        it_counts.append((tick, active_infections))
 
     # Save infection data as CSV
     with open(f"code_red_II_{run}.csv", "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["IP", "Infected_Tick"])
-        for ip, infected_tick in sorted(status["infected"].items()):
-            writer.writerow([ip, infected_tick])
+        writer.writerow(["Tick", "Infected_Count"])
+        for tick, count in it_counts:
+            writer.writerow([tick, count])
 
 
 def infect_ip(status, target_ip, tick):
