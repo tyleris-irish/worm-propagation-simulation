@@ -32,7 +32,7 @@ def code_red(status:dict, run:int):
     tick = 0
 
     # Record I(0): the number of infected machines at each tick
-    it_counts = [(tick, sum(1 for t in status["infected"].values()))]
+    infection_counts = [(tick, sum(1 for t in status["infected"].values()))]
 
     while True:
         tick += 1
@@ -42,17 +42,13 @@ def code_red(status:dict, run:int):
                     target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
         active_infections = sum(1 for t in status["infected"].values())
-        it_counts.append((tick, active_infections))
+        infection_counts.append((tick, active_infections))
 
         if status["vulnerable"] == []:
             break
     
     # Save infection data as CSV
-    with open(f"code_red_{run}.csv", "w", newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(["Tick", "Infected_Count"])
-        for tick, count in it_counts:
-            writer.writerow([tick, count])
+    write_infection_report(f"code_red_{run}.csv", infection_counts)
 
 
 def code_red_II(status:dict, run:int):
@@ -63,7 +59,7 @@ def code_red_II(status:dict, run:int):
     tick = 0
 
     # Record I(0): the number of infected machines at each tick
-    it_counts = [(tick, sum(1 for t in status["infected"].values()))]
+    infection_counts = [(tick, sum(1 for t in status["infected"].values()))]
 
     while True:
         tick += 1
@@ -76,17 +72,13 @@ def code_red_II(status:dict, run:int):
                         target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
         active_infections = sum(1 for t in status["infected"].values())
-        it_counts.append((tick, active_infections))
+        infection_counts.append((tick, active_infections))
 
         if status["vulnerable"] == []:
             break
 
     # Save infection data as CSV
-    with open(f"code_red_II_{run}.csv", "w", newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(["Tick", "Infected_Count"])
-        for tick, count in it_counts:
-            writer.writerow([tick, count])
+    write_infection_report(f"code_red_II_{run}.csv", infection_counts)
 
 
 def infect_ip(status, target_ip, tick):
@@ -100,7 +92,16 @@ def infect_ip(status, target_ip, tick):
     if target_ip in status["vulnerable"]:
         status["infected"][target_ip] = tick + 1
         status["vulnerable"].remove(target_ip)
-        print(f"IP {target_ip} is infected.")
+
+
+def write_infection_report(file_name:str, infection_counts:list):
+    print(f"Writing infection report to {file_name}")
+    with open(file_name, "w", newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Tick", "Infected_Count"])
+        for tick, count in infection_counts:
+            writer.writerow([tick, count])
+
 
 if __name__ == "__main__":
     # Simulate Code Red worm three times
