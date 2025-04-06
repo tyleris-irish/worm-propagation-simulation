@@ -49,7 +49,7 @@ def code_red(status:dict, run:int):
             break
     
     # Save infection data as CSV
-    write_infection_report(f"code_red_{run}.csv", infection_counts)
+    write_infection_report(f"code_red_{run}", infection_counts)
 
     return tick
 
@@ -81,7 +81,7 @@ def code_red_II(status:dict, run:int):
             break
 
     # Save infection data as CSV
-    write_infection_report(f"code_red_II_{run}.csv", infection_counts)
+    write_infection_report(f"code_red_II_{run}", infection_counts)
 
     return tick
 
@@ -100,10 +100,10 @@ def infect_ip(status, target_ip, tick):
 
 
 def write_infection_report(file_name:str, infection_counts:list):
-    print(f"Writing infection report to {file_name}")
-    with open(file_name, "w", newline='') as f:
+    print(f"Writing infection report to {file_name}.csv")
+    with open(f"{file_name}.csv", "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["Tick", "Infected_Count"])
+        writer.writerow(["Tick", f"{file_name} Infected Count"])
         for tick, count in infection_counts:
             writer.writerow([tick, count])
 
@@ -141,6 +141,6 @@ if __name__ == "__main__":
     # Write elapsed times to CSV
     with open("elapsed_times.csv", "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["Simulation", "Elapsed_Time", "Ticks"])
+        writer.writerow(["Simulation", "Elapsed Time", "Ticks"])
         for simulation, elapsed_time, ticks in elapsed_times:
-            writer.writerow([simulation, elapsed_time, ticks])
+            writer.writerow([simulation, f"{elapsed_time:.3f}", ticks])
