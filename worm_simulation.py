@@ -32,17 +32,20 @@ def code_red(status:dict, run:int):
     tick = 0
 
     # Record I(0): the number of infected machines at each tick
-    it_counts = [(tick, sum(1 for t in status["infected"].values() if t <= tick))]
+    it_counts = [(tick, sum(1 for t in status["infected"].values()))]
 
-    while status["vulnerable"]:
+    while True:
         tick += 1
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
                 if tick >= infected_tick+30:
                     target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
-        active_infections = sum(1 for t in status["infected"].values() if t <= tick)
+        active_infections = sum(1 for t in status["infected"].values())
         it_counts.append((tick, active_infections))
+
+        if status["vulnerable"] == []:
+            break
     
     # Save infection data as CSV
     with open(f"code_red_{run}.csv", "w", newline='') as f:
@@ -60,9 +63,9 @@ def code_red_II(status:dict, run:int):
     tick = 0
 
     # Record I(0): the number of infected machines at each tick
-    it_counts = [(tick, sum(1 for t in status["infected"].values() if t <= tick))]
+    it_counts = [(tick, sum(1 for t in status["infected"].values()))]
 
-    while status["vulnerable"]:
+    while True:
         tick += 1
         for ip, infected_tick in list(status["infected"].items()):
             for _ in range(SCAN_RATE):
@@ -72,8 +75,11 @@ def code_red_II(status:dict, run:int):
                     else:
                         target = random.randint(1, IP_RANGE)
                     infect_ip(status, target, tick)
-        active_infections = sum(1 for t in status["infected"].values() if t <= tick)
+        active_infections = sum(1 for t in status["infected"].values())
         it_counts.append((tick, active_infections))
+
+        if status["vulnerable"] == []:
+            break
 
     # Save infection data as CSV
     with open(f"code_red_II_{run}.csv", "w", newline='') as f:
