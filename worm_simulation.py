@@ -1,5 +1,6 @@
 import random
 import csv
+import time
 
 IP_RANGE = 100000
 SCAN_RATE = 2
@@ -104,14 +105,38 @@ def write_infection_report(file_name:str, infection_counts:list):
 
 
 if __name__ == "__main__":
+
+    elapsed_times = []
     # Simulate Code Red worm three times
     for run in range (1, 3+1):
+        start_time = time.time()
+        
         # Simulate Code Red worm
         status = initialize_ips()
         code_red(status, run)
 
+        # Record elapsed time
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        elapsed_times.append((f"code_red_{run}",elapsed_time))
+
+
     # Simulate Code Red II worm three times
     for run in range(1, 3+1):
+        start_time = time.time()
+
         # Simulate Code Red II worm
         status = initialize_ips()
         code_red_II(status, run)
+
+        # Record elapsed time
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        elapsed_times.append((f"code_red_{run}",elapsed_time))
+
+    # Write elapsed times to CSV
+    with open("elapsed_times.csv", "w", newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Simulation", "Elapsed_Time"])
+        for simulation, elapsed_time in elapsed_times:
+            writer.writerow([simulation, elapsed_time])
