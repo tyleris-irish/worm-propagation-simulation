@@ -139,7 +139,7 @@ if __name__ == "__main__":
         # Record elapsed time
         end_time = time.time()
         elapsed_time = end_time - start_time
-        elapsed_times.append((f"code_red_{run}", elapsed_time, ticks))
+        elapsed_times.append((f"code_red_II_{run}", elapsed_time, ticks))
 
     # Write elapsed times to CSV
     with open("elapsed_times.csv", "w", newline='') as f:
