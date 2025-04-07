@@ -100,6 +100,10 @@ def infect_ip(status, target_ip, tick):
 
 
 def write_infection_report(file_name:str, infection_counts:list):
+    """"
+    Write the infection report to a CSV file.
+    The report contains the tick number and the number of infected machines at that tick.
+    """
     print(f"Writing infection report to {file_name}.csv")
     with open(f"{file_name}.csv", "w", newline='') as f:
         writer = csv.writer(f)
@@ -109,7 +113,6 @@ def write_infection_report(file_name:str, infection_counts:list):
 
 
 if __name__ == "__main__":
-
     elapsed_times = []
     # Simulate Code Red worm three times
     for run in range (1, 3+1):
