@@ -14,6 +14,7 @@ This project simulates the propagation of computer worms, specifically the Code 
 ```
 .
 ├── worm_simulation.py       # Main simulation script
+├── Report.pdf               # Project report on simulation results
 └── README.md                # Project documentation
 ```
 
